@@ -6,7 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import me.mc_cloud.playerfreezer.Main;
-import net.md_5.bungee.api.ChatColor;
 
 public class CommandStopper implements Listener {
 
@@ -20,9 +19,10 @@ public class CommandStopper implements Listener {
 	
 	@EventHandler
 	public void commandStopper(PlayerCommandPreprocessEvent e) {
+		if (Main.ALLOWED_COMMANDS.contains(e.getMessage().split(" ")[0])) return;
 		if (Main.frozenPlayers.contains(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to execute commands at this time");
+			e.getPlayer().sendMessage(Main.BLOCK_COMMAND_MESSAGE);
 		}
 	}
 

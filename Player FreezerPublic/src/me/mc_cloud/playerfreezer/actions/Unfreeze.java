@@ -28,7 +28,7 @@ public class Unfreeze extends Action {
 		if (Main.frozenPlayers.contains(p.getUniqueId().toString())) {
 			Main.frozenPlayers.remove(p.getUniqueId().toString());
 			sender.sendMessage(ChatColor.GREEN + "Unfroze " + args[0]);
-			p.sendMessage(ChatColor.GREEN + "You have been unfrozen by staff");
+			p.sendMessage(Main.UNFREEZE_MESSAGE);
 		} else {
 			sender.sendMessage(ChatColor.YELLOW + "That player is not frozen");
 		}

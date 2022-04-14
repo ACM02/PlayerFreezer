@@ -27,7 +27,7 @@ public class Freeze extends Action {
 		}
 		Main.frozenPlayers.add(p.getUniqueId().toString());
 		sender.sendMessage(ChatColor.GREEN + "Froze " + args[0]);
-		p.sendMessage(ChatColor.RED + "You have been frozen by staff, do not log out or you will be banned. Await further instruction.");
+		p.sendMessage(Main.ON_FREEZE_MESSAGE);
 	}
 
 }

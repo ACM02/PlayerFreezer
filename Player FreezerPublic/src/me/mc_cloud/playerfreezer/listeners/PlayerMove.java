@@ -1,12 +1,14 @@
 package me.mc_cloud.playerfreezer.listeners;
 
+import java.util.Date;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import me.mc_cloud.playerfreezer.Main;
-import net.md_5.bungee.api.ChatColor;
+import me.mc_cloud.playerfreezer.tools.Utils;
 
 public class PlayerMove implements Listener {
 	
@@ -23,7 +25,11 @@ public class PlayerMove implements Listener {
 		if (Main.frozenPlayers.contains(e.getPlayer().getUniqueId().toString())) {
 			if (e.getFrom().distance(e.getTo()) > 0.06) {
 				e.setTo(e.getFrom());
-				e.getPlayer().sendMessage(ChatColor.RED + "You have been frozen, don't log out or you will be banned");
+				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
+						Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
+					e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+					Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
+				}
 			}
 		}
 	}

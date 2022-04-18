@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,8 +25,10 @@ import net.md_5.bungee.api.ChatColor;
 public class Main extends JavaPlugin {
 
 	public static ArrayList<String> frozenPlayers = new ArrayList<String>();
+	public static HashMap<String, Long> messageCooldowns = new HashMap<>();
 	public static String ON_FREEZE_MESSAGE;
 	public static String UNFREEZE_MESSAGE;
+	public static String FREEZE_WARNING;
 	public static String BLOCK_COMMAND_MESSAGE;
 	public static final ArrayList<String> ALLOWED_COMMANDS = new ArrayList<>();
 	
@@ -36,6 +39,7 @@ public class Main extends JavaPlugin {
 		
 		config.addDefault("onFreezeMessage", "&cYou have been frozen by staff, do not log out or you will be banned. Await further instruction.");
 		config.addDefault("unFreezeMessage", "&aYou have been unfrozen by staff");
+		config.addDefault("freezeWarning", "&cYou have been frozen, don't log out or you will be banned");
 		config.addDefault("blockCommandMessage", "&cYou do not have permission to execute commands at this time");
 		config.options().copyDefaults(true);
 		
@@ -57,6 +61,7 @@ public class Main extends JavaPlugin {
 		ON_FREEZE_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("onFreezeMessage"));
 		UNFREEZE_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("unFreezeMessage"));
 		BLOCK_COMMAND_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("blockCommandMessage"));
+		FREEZE_WARNING = ChatColor.translateAlternateColorCodes('&', config.getString("freezeWarning"));
 		
 		new PlayerMove(this);
 		new PlayerLeave(this);

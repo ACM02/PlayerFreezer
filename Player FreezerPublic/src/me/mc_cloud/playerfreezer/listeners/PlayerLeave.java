@@ -20,7 +20,7 @@ public class PlayerLeave implements Listener {
 	
 	@EventHandler
 	public void playerLeave(PlayerQuitEvent e) {
-		if (Main.frozenPlayers.contains(e.getPlayer().getUniqueId().toString())) {
+		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
 			Bukkit.getBanList(Type.NAME).addBan(e.getPlayer().getName(), "You disconnected while frozen by staff", null, "100");
 		}
 	}

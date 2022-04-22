@@ -25,7 +25,9 @@ public class Unfreeze extends Action {
 			sender.sendMessage(ChatColor.RED + "Player not found");
 			return;
 		}
-		if (Main.frozenPlayers.contains(p.getUniqueId().toString())) {
+		if (Main.frozenPlayers.keySet().contains(p.getUniqueId().toString())) {
+			p.setFlying(false);
+			p.setAllowFlight(Main.frozenPlayers.get(p.getUniqueId().toString()));
 			Main.frozenPlayers.remove(p.getUniqueId().toString());
 			sender.sendMessage(ChatColor.GREEN + "Unfroze " + args[0]);
 			p.sendMessage(Main.UNFREEZE_MESSAGE);

@@ -25,9 +25,15 @@ public class Freeze extends Action {
 			sender.sendMessage(ChatColor.RED + "Player not found");
 			return;
 		}
-		Main.frozenPlayers.add(p.getUniqueId().toString());
-		sender.sendMessage(ChatColor.GREEN + "Froze " + args[0]);
-		p.sendMessage(Main.ON_FREEZE_MESSAGE);
+		if (!Main.frozenPlayers.keySet().contains(p.getUniqueId().toString())) {
+			Main.frozenPlayers.put(p.getUniqueId().toString(), p.getAllowFlight());
+			p.setAllowFlight(true);
+			p.setFlying(true);
+			sender.sendMessage(ChatColor.GREEN + "Froze " + args[0]);
+			p.sendMessage(Main.ON_FREEZE_MESSAGE);
+		} else {
+			sender.sendMessage(ChatColor.RED + "Player is already frozen");
+		}
 	}
 
 }

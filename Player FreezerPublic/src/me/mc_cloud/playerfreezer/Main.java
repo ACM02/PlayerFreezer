@@ -10,12 +10,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.mc_cloud.playerfreezer.actions.Freeze;
+import me.mc_cloud.playerfreezer.actions.FreezeGun;
 import me.mc_cloud.playerfreezer.actions.Unfreeze;
 import me.mc_cloud.playerfreezer.listeners.CommandStopper;
+import me.mc_cloud.playerfreezer.listeners.FreezeRayFire;
+import me.mc_cloud.playerfreezer.listeners.FreezeRayHit;
 import me.mc_cloud.playerfreezer.listeners.PlayerLeave;
 import me.mc_cloud.playerfreezer.listeners.PlayerMove;
 import me.mc_cloud.playerfreezer.tools.CommandManager;
@@ -24,13 +30,14 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Main extends JavaPlugin {
 
-	public static ArrayList<String> frozenPlayers = new ArrayList<String>();
+	public static HashMap<String, Boolean> frozenPlayers = new HashMap<String, Boolean>();
 	public static HashMap<String, Long> messageCooldowns = new HashMap<>();
 	public static String ON_FREEZE_MESSAGE;
 	public static String UNFREEZE_MESSAGE;
 	public static String FREEZE_WARNING;
 	public static String BLOCK_COMMAND_MESSAGE;
 	public static final ArrayList<String> ALLOWED_COMMANDS = new ArrayList<>();
+	public static ItemStack freezeGun;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -41,6 +48,7 @@ public class Main extends JavaPlugin {
 		config.addDefault("unFreezeMessage", "&aYou have been unfrozen by staff");
 		config.addDefault("freezeWarning", "&cYou have been frozen, don't log out or you will be banned");
 		config.addDefault("blockCommandMessage", "&cYou do not have permission to execute commands at this time");
+		config.addDefault("freezeGun", true);
 		config.options().copyDefaults(true);
 		
 		List<String> allowedCommands = config.getStringList("allowedCommands");
@@ -63,9 +71,20 @@ public class Main extends JavaPlugin {
 		BLOCK_COMMAND_MESSAGE = ChatColor.translateAlternateColorCodes('&', config.getString("blockCommandMessage"));
 		FREEZE_WARNING = ChatColor.translateAlternateColorCodes('&', config.getString("freezeWarning"));
 		
+		freezeGun = new ItemStack(Material.STICK, 1);
+		ItemMeta meta = freezeGun.getItemMeta();
+		meta.setDisplayName(ChatColor.AQUA + "Freeze gun");
+		List<String> lore = new ArrayList<>();
+		lore.add(ChatColor.BLUE + "Shoots a freezing snowball");
+		meta.setLore(lore);
+		freezeGun.setItemMeta(meta);
+		
+		
 		new PlayerMove(this);
 		new PlayerLeave(this);
 		new CommandStopper(this);
+		new FreezeRayFire(this);
+		new FreezeRayHit(this);
 		
 		File dir = getDataFolder();
 		
@@ -73,10 +92,10 @@ public class Main extends JavaPlugin {
 			if (!dir.mkdir())
 				System.out.println("[" + getDescription().getName() + "] Could not create directory for plugin");
 		
-		frozenPlayers = (ArrayList<String>) load(new File(getDataFolder(), "frozenPlayers.dat"));
+		frozenPlayers = (HashMap<String, Boolean>) load(new File(getDataFolder(), "frozenPlayers.dat"));
 		
 		if (frozenPlayers == null) {
-			frozenPlayers = new ArrayList<String>();
+			frozenPlayers = new HashMap<String, Boolean>();
 		}
 		
 		CommandManager cmdManager = new CommandManager(this);
@@ -90,6 +109,14 @@ public class Main extends JavaPlugin {
 		cmdManager.getCommand("unfreeze").setUsageMessage(ChatColor.RED + "Improper usage: /unfreeze <player>");
 		cmdManager.getCommand("unfreeze").setPermissionMessage(ChatColor.RED + "You do not have permission to execute this command");
 		cmdManager.getCommand("unfreeze").addPermission("playerFreezer.use");
+		
+		if (config.getBoolean("freezeGun")) {
+			cmdManager.createCommand("freezegun");
+			cmdManager.getCommand("freezegun").registerDefaultAction(new FreezeGun());
+			cmdManager.getCommand("freezegun").setUsageMessage(ChatColor.RED + "Improper usage: /freezegun");
+			cmdManager.getCommand("freezegun").setPermissionMessage(ChatColor.RED + "You do not have permission to execute this command");
+			cmdManager.getCommand("freezegun").addPermission("playerFreezer.use");
+		}
 		
 		new UpdateChecker(this, 101362).getVersion(version -> {
             if (!this.getDescription().getVersion().equals(version)) {

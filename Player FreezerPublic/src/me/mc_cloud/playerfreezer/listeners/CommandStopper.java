@@ -20,7 +20,7 @@ public class CommandStopper implements Listener {
 	@EventHandler
 	public void commandStopper(PlayerCommandPreprocessEvent e) {
 		if (Main.ALLOWED_COMMANDS.contains(e.getMessage().split(" ")[0])) return;
-		if (Main.frozenPlayers.contains(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
+		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(Main.BLOCK_COMMAND_MESSAGE);
 		}

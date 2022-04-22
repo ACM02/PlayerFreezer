@@ -22,7 +22,7 @@ public class PlayerMove implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if (Main.frozenPlayers.contains(e.getPlayer().getUniqueId().toString())) {
+		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
 			if (e.getFrom().distance(e.getTo()) > 0.06) {
 				e.setTo(e.getFrom());
 				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||

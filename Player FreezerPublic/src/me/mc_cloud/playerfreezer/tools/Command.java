@@ -123,7 +123,11 @@ public class Command implements CommandExecutor, TabCompleter {
 			return false;
 		}
 		if (sender instanceof Player) {
-			if (!hasPermissions((Player) sender) && !hasActionPermissions((Player) sender)) {
+			if (!hasPermissions((Player) sender)) {
+				sender.sendMessage(noPermissionMessage);
+				return false;
+			}
+			if (!hasPermissions((Player) sender) && !hasActionPermissions((Player) sender)) { // I question the legitimacy of this check, seems not needed
 				sender.sendMessage(noPermissionMessage);
 				return false;
 			}

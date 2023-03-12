@@ -11,7 +11,7 @@ import me.mc_cloud.playerfreezer.tools.Argument;
 import net.md_5.bungee.api.ChatColor;
 
 public class Freeze extends Action {
-
+	
 	public Freeze() {
 		addArg(new Argument(ArgType.PLAYER, 0));
 	}
@@ -25,15 +25,7 @@ public class Freeze extends Action {
 			sender.sendMessage(ChatColor.RED + "Player not found");
 			return;
 		}
-		if (!Main.frozenPlayers.keySet().contains(p.getUniqueId().toString())) {
-			Main.frozenPlayers.put(p.getUniqueId().toString(), p.getAllowFlight());
-			p.setAllowFlight(true);
-			p.setFlying(true);
-			sender.sendMessage(ChatColor.GREEN + "Froze " + args[0]);
-			p.sendMessage(Main.ON_FREEZE_MESSAGE);
-		} else {
-			sender.sendMessage(ChatColor.RED + "Player is already frozen");
-		}
+		Main.freeze(p, sender);
 	}
 
 }

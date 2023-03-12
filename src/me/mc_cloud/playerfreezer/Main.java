@@ -10,11 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import me.mc_cloud.playerfreezer.actions.Freeze;
 import me.mc_cloud.playerfreezer.actions.FreezeGun;
@@ -22,6 +27,9 @@ import me.mc_cloud.playerfreezer.actions.Unfreeze;
 import me.mc_cloud.playerfreezer.listeners.CommandStopper;
 import me.mc_cloud.playerfreezer.listeners.FreezeRayFire;
 import me.mc_cloud.playerfreezer.listeners.FreezeRayHit;
+import me.mc_cloud.playerfreezer.listeners.InventoryTrap;
+import me.mc_cloud.playerfreezer.listeners.PlayerChat;
+import me.mc_cloud.playerfreezer.listeners.PlayerInteract;
 import me.mc_cloud.playerfreezer.listeners.PlayerLeave;
 import me.mc_cloud.playerfreezer.listeners.PlayerMove;
 import me.mc_cloud.playerfreezer.tools.CommandManager;
@@ -30,18 +38,33 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Main extends JavaPlugin {
 
+	/*
+	 * TODO
+	 * 
+	 * Future plans: 
+	 * More permissions (Different levels of frozen)
+	 * Changing punishment type (Both default and specify in command)
+	 * New punishment types (Temp ban, 
+	 * Specify level of freeze in command? (Look around, etc)
+	 * Send admins update notifications
+	 * 
+	 */
+	
 	public static HashMap<String, Boolean> frozenPlayers = new HashMap<String, Boolean>();
-	public static HashMap<String, Long> messageCooldowns = new HashMap<>();
+	public static HashMap<String, Long> messageCooldowns = new HashMap<>(); // Stops players from getting spammed with "You're frozen" messages
 	public static String ON_FREEZE_MESSAGE;
 	public static String UNFREEZE_MESSAGE;
 	public static String FREEZE_WARNING;
 	public static String BLOCK_COMMAND_MESSAGE;
 	public static final ArrayList<String> ALLOWED_COMMANDS = new ArrayList<>();
 	public static ItemStack freezeGun;
+	public static float MOVEMENT_TOLERANCE = (float) 0.06;
+	public static Main instance;
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnable() {
+		instance = this;
 		FileConfiguration config = getConfig();
 		
 		config.addDefault("onFreezeMessage", "&cYou have been frozen by staff, do not log out or you will be banned. Await further instruction.");
@@ -49,6 +72,11 @@ public class Main extends JavaPlugin {
 		config.addDefault("freezeWarning", "&cYou have been frozen, don't log out or you will be banned");
 		config.addDefault("blockCommandMessage", "&cYou do not have permission to execute commands at this time");
 		config.addDefault("freezeGun", true);
+		config.addDefault("lookAround", true);
+		config.addDefault("interact", true);
+		config.addDefault("blind", true);
+		config.addDefault("chat", true);
+		config.addDefault("inventoryTrap", false);
 		config.options().copyDefaults(true);
 		
 		List<String> allowedCommands = config.getStringList("allowedCommands");
@@ -79,12 +107,26 @@ public class Main extends JavaPlugin {
 		meta.setLore(lore);
 		freezeGun.setItemMeta(meta);
 		
+		if (getConfig().getBoolean("lookAround")) {
+			MOVEMENT_TOLERANCE = (float) 0.06;
+		} else {
+			MOVEMENT_TOLERANCE = 0;
+		}
 		
 		new PlayerMove(this);
 		new PlayerLeave(this);
 		new CommandStopper(this);
 		new FreezeRayFire(this);
 		new FreezeRayHit(this);
+		if (!config.getBoolean("interact")) {
+			new PlayerInteract(this);
+		}
+		if (!config.getBoolean("chat")) {
+			new PlayerChat(this);
+		}
+		if (config.getBoolean("inventoryTrap")) {
+			new InventoryTrap(this);
+		}
 		
 		File dir = getDataFolder();
 		
@@ -103,20 +145,21 @@ public class Main extends JavaPlugin {
 		cmdManager.getCommand("freeze").registerAction(new Freeze());
 		cmdManager.getCommand("freeze").setUsageMessage(ChatColor.RED + "Improper usage: /freeze <player>");
 		cmdManager.getCommand("freeze").setPermissionMessage(ChatColor.RED + "You do not have permission to execute this command");
-		cmdManager.getCommand("freeze").addPermission("playerFreezer.use");
+		cmdManager.getCommand("freeze").addPermission("playerFreezer.freeze");
 		cmdManager.createCommand("unfreeze");
 		cmdManager.getCommand("unfreeze").registerAction(new Unfreeze());
 		cmdManager.getCommand("unfreeze").setUsageMessage(ChatColor.RED + "Improper usage: /unfreeze <player>");
 		cmdManager.getCommand("unfreeze").setPermissionMessage(ChatColor.RED + "You do not have permission to execute this command");
-		cmdManager.getCommand("unfreeze").addPermission("playerFreezer.use");
+		cmdManager.getCommand("unfreeze").addPermission("playerFreezer.unfreeze");
 		
 		if (config.getBoolean("freezeGun")) {
 			cmdManager.createCommand("freezegun");
 			cmdManager.getCommand("freezegun").registerDefaultAction(new FreezeGun());
 			cmdManager.getCommand("freezegun").setUsageMessage(ChatColor.RED + "Improper usage: /freezegun");
 			cmdManager.getCommand("freezegun").setPermissionMessage(ChatColor.RED + "You do not have permission to execute this command");
-			cmdManager.getCommand("freezegun").addPermission("playerFreezer.use");
+			cmdManager.getCommand("freezegun").addPermission("playerFreezer.freeze-gun");
 		}
+		
 		
 		new UpdateChecker(this, 101362).getVersion(version -> {
             if (!this.getDescription().getVersion().equals(version)) {
@@ -177,6 +220,68 @@ public class Main extends JavaPlugin {
         } catch (ClassNotFoundException e) {
         	getLogger().warning("Unable to load files");
         	return null;
+		}
+	}
+	
+	public static void freeze(Player target, CommandSender freezer) {
+		if (target.hasPermission("playerFreezer.bypass")) {
+			freezer.sendMessage(ChatColor.RED + "That player cannot be frozen");
+			return;
+		}
+		if (!Main.frozenPlayers.keySet().contains(target.getUniqueId().toString())) {
+			Main.frozenPlayers.put(target.getUniqueId().toString(), target.getAllowFlight());
+			target.setAllowFlight(true);
+			target.setFlying(true);
+			if (instance.getConfig().getBoolean("inventoryTrap")) {
+				target.openInventory(Bukkit.createInventory(null, 9, "You are frozen"));
+			}
+			if (instance.getConfig().getBoolean("blind")) {
+				target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 0, false, false, false));
+			}
+			freezer.sendMessage(ChatColor.GREEN + "Froze " + target.getName());
+			target.sendMessage(Main.ON_FREEZE_MESSAGE);
+		} else {
+			freezer.sendMessage(ChatColor.RED + "Player is already frozen");
+		}
+	}
+	
+	public static void freeze(Player target, Player freezer) {
+		if (target.hasPermission("playerFreezer.bypass")) {
+			freezer.sendMessage(ChatColor.RED + "That player cannot be frozen");
+			return;
+		}
+		if (!Main.frozenPlayers.keySet().contains(target.getUniqueId().toString())) {
+			Main.frozenPlayers.put(target.getUniqueId().toString(), target.getAllowFlight());
+			target.setAllowFlight(true);
+			target.setFlying(true);
+			if (instance.getConfig().getBoolean("inventoryTrap")) {
+				target.openInventory(Bukkit.createInventory(null, 9, "You are frozen"));
+			}
+			if (instance.getConfig().getBoolean("blind")) {
+				target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 0, false, false, false));
+			}
+			freezer.sendMessage(ChatColor.GREEN + "Froze " + target.getName());
+			target.sendMessage(Main.ON_FREEZE_MESSAGE);
+		} else {
+			freezer.sendMessage(ChatColor.RED + "Player is already frozen");
+		}
+	}
+	
+	public static void unfreeze(Player target, CommandSender freezer) {
+		if (Main.frozenPlayers.keySet().contains(target.getUniqueId().toString())) {
+			target.setFlying(false);
+			target.setAllowFlight(Main.frozenPlayers.get(target.getUniqueId().toString()));
+			Main.frozenPlayers.remove(target.getUniqueId().toString());
+			if (target.hasPotionEffect(PotionEffectType.BLINDNESS) && instance.getConfig().getBoolean("blind")) {
+				target.removePotionEffect(PotionEffectType.BLINDNESS);
+			}
+			if (instance.getConfig().getBoolean("inventoryTrap")) {
+				target.closeInventory();
+			}
+			freezer.sendMessage(ChatColor.GREEN + "Unfroze " + target.getName());
+			target.sendMessage(Main.UNFREEZE_MESSAGE);
+		} else {
+			freezer.sendMessage(ChatColor.YELLOW + "That player is not frozen");
 		}
 	}
 }

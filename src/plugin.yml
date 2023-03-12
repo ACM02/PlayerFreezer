@@ -1,7 +1,7 @@
 name: PlayerFreezer
 main: me.mc_cloud.playerfreezer.Main
 description: Admin tool that freezes players
-version: 1.3.1
+version: 2.0
 author: MC_Cloud
 api-version: 1.18
 
@@ -12,6 +12,12 @@ commands:
     aliases: [fg]
   
 permissions:
-  playerFreezer.use:
+  playerFreezer.freeze:
+    default: op
+  playerFreezer.unfreeze:
+    default: op
+  playerFreezer.bypass:
+    default: op
+  playerFreezer.freeze-gun:
     default: op
     

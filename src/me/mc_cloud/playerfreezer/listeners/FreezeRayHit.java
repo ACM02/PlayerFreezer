@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import me.mc_cloud.playerfreezer.Main;
-import net.md_5.bungee.api.ChatColor;
 
 public class FreezeRayHit implements Listener {
 
@@ -26,23 +25,10 @@ public class FreezeRayHit implements Listener {
 
 			if (e.getHitEntity() instanceof Player) {
 				Player p = (Player) e.getHitEntity();
-				if (!Main.frozenPlayers.keySet().contains(p.getUniqueId().toString())) {
-					Main.frozenPlayers.put(p.getUniqueId().toString(), p.getAllowFlight());
-					p.setAllowFlight(true);
-					p.setFlying(true);
-					if (e.getEntity().getShooter() instanceof Player) {
-						Player shooter = (Player) e.getEntity().getShooter();
-						shooter.sendMessage(ChatColor.GREEN + "Froze " + p.getName());
-					}
-					p.sendMessage(Main.ON_FREEZE_MESSAGE);
-				} else {
-					Player shooter = (Player) e.getEntity().getShooter();
-					shooter.sendMessage(ChatColor.RED + "Player is already frozen");
-				}
-				
+				Player shooter = (Player) e.getEntity().getShooter();
+				Main.freeze(p, shooter);
 			}
 			e.getEntity().remove();
-			
 		}
 	}
 	

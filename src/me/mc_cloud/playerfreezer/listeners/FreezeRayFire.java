@@ -25,6 +25,7 @@ public class FreezeRayFire implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
+		if (!e.getPlayer().hasPermission("playerFreezer.freeze-gun")) return;
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (e.getPlayer().getItemInHand().getType() == Material.STICK && 
 					e.getPlayer().getItemInHand().hasItemMeta() &&

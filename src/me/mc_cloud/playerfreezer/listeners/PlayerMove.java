@@ -22,8 +22,17 @@ public class PlayerMove implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
+		if (e.getPlayer().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
-			if (e.getFrom().distance(e.getTo()) > 0.06) {
+			if (Main.MOVEMENT_TOLERANCE == 0) {
+				e.setCancelled(true);
+				e.setTo(e.getFrom());
+				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
+						Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
+					e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+					Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
+				}
+			} else if (e.getFrom().distance(e.getTo()) > Main.MOVEMENT_TOLERANCE) {
 				e.setTo(e.getFrom());
 				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
 						Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {

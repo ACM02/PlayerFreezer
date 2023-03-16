@@ -33,6 +33,7 @@ public class SimpleConfig extends YamlConfiguration {
 
 	private File file;
 	private FileConfiguration config;
+	@SuppressWarnings("unused")
 	private boolean useDefaults;
 	private YamlConfiguration defaults;
 

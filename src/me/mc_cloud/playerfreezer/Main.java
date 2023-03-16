@@ -24,7 +24,6 @@ import org.bukkit.potion.PotionEffectType;
 import me.mc_cloud.playerfreezer.actions.Freeze;
 import me.mc_cloud.playerfreezer.actions.FreezeGun;
 import me.mc_cloud.playerfreezer.actions.Unfreeze;
-import me.mc_cloud.playerfreezer.config_tools.SimpleConfigManager;
 import me.mc_cloud.playerfreezer.listeners.CommandStopper;
 import me.mc_cloud.playerfreezer.listeners.FreezeRayFire;
 import me.mc_cloud.playerfreezer.listeners.FreezeRayHit;
@@ -34,7 +33,6 @@ import me.mc_cloud.playerfreezer.listeners.PlayerInteract;
 import me.mc_cloud.playerfreezer.listeners.PlayerLeave;
 import me.mc_cloud.playerfreezer.listeners.PlayerMove;
 import me.mc_cloud.playerfreezer.tools.CommandManager;
-import me.mc_cloud.playerfreezer.tools.ConfigManager;
 import me.mc_cloud.playerfreezer.tools.Messages;
 import me.mc_cloud.playerfreezer.tools.UpdateChecker;
 import net.md_5.bungee.api.ChatColor;
@@ -77,38 +75,47 @@ public class Main extends JavaPlugin {
 		FileConfiguration config = getConfig();
 		//saveDefaultConfig();
 		
-		SimpleConfigManager manager = new SimpleConfigManager(instance);
-		manager.prepareFile("\\PlayerFreezer", "config.yml");
-		
-		
-		ConfigManager.translateConfig();
-		
-//		config.addDefault("onFreezeMessage", "&cYou have been frozen by staff, do not log out or you will be banned. Await further instruction.");
-//		config.addDefault("unFreezeMessage", "&aYou have been unfrozen by staff");
-//		config.addDefault("freezeWarning", "&cYou have been frozen, don't log out or you will be banned");
-//		config.addDefault("blockCommandMessage", "&cYou do not have permission to execute commands at this time");
-//		config.addDefault("freezeGun", true);
-//		config.addDefault("lookAround", true);
-//		config.addDefault("interact", true);
-//		config.addDefault("blind", true);
-//		config.addDefault("chat", true);
-//		config.addDefault("inventoryTrap", false);
-//		config.options().copyDefaults(true);
+//		SimpleConfigManager manager = new SimpleConfigManager(instance);
+//		manager.prepareFile("\\PlayerFreezer", "config.yml");
 //		
-//		List<String> allowedCommands = config.getStringList("allowedCommands");
-//		if (allowedCommands.isEmpty()) {
-//			allowedCommands = new ArrayList<>();
-//			allowedCommands.add("/sampleCommand");
-//			config.set("allowedCommands", allowedCommands);
-//			ALLOWED_COMMANDS.add("/sampleCommand");
-//		} else {
-//			for (String string : allowedCommands) {
-//				ALLOWED_COMMANDS.add(string);
-//			}
-//		}
 //		
-//		config.options().copyDefaults(true);
-//		saveConfig();
+//		ConfigManager.translateConfig();
+		
+		config.addDefault("messages.onFreezeTarget", "&cYou have been frozen by staff, do not log out or you will be banned. Await further instruction.");
+		config.addDefault("messages.onFreezeSender", "&aFroze %player%");
+		config.addDefault("messages.unFreezeTarget", "&aYou have been unfrozen by staff");
+		config.addDefault("messages.unFreezeSender", "&aUnfroze %player%");
+		config.addDefault("messages.freezeWarning", "&cYou have been frozen, don't log out or you will be banned");
+		config.addDefault("messages.blockCommand", "&cYou do not have permission to execute commands at this time");
+		config.addDefault("messages.blockChat", "&cYou do not have permission to use chat at this time");
+		config.addDefault("messages.blockInteract", "You do not have permission to do that at this time");
+		config.addDefault("messages.playerNotFrozen", "&eThat player is not frozen");
+		config.addDefault("messages.playerAlreadyFrozen", "&cThat player is already frozen");
+		config.addDefault("messages.notFreezable", "&eThat player cannot be frozen");
+		config.addDefault("messages.noPermission", "&cYou do not have permission to use that command");
+		config.addDefault("messages.playerNotFound", "&cPlayer not found");
+		config.addDefault("freezeGun", true);
+		config.addDefault("canLookAround", true);
+		config.addDefault("canInteract", true);
+		config.addDefault("isBlind", true);
+		config.addDefault("canChat", true);
+		config.addDefault("inventoryTrap", false);
+		config.options().copyDefaults(true);
+		
+		List<String> allowedCommands = config.getStringList("allowedCommands");
+		if (allowedCommands.isEmpty()) {
+			allowedCommands = new ArrayList<>();
+			allowedCommands.add("/sampleCommand");
+			config.set("allowedCommands", allowedCommands);
+			ALLOWED_COMMANDS.add("/sampleCommand");
+		} else {
+			for (String string : allowedCommands) {
+				ALLOWED_COMMANDS.add(string);
+			}
+		}
+		
+		config.options().copyDefaults(true);
+		saveConfig();
 		
 		freezeGun = new ItemStack(Material.STICK, 1);
 		ItemMeta meta = freezeGun.getItemMeta();

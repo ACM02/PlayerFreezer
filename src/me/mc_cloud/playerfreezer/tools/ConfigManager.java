@@ -1,11 +1,8 @@
 package me.mc_cloud.playerfreezer.tools;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.mc_cloud.playerfreezer.Main;
 

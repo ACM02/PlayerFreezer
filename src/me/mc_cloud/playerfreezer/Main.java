@@ -49,7 +49,7 @@ public class Main extends JavaPlugin {
 	 * Specify level of freeze in command? (Look around, etc)
 	 * Send admins update notifications
 	 * GUI menu for frozen players?
-	 * Improve config readability (Add 'can' in front of several options)
+	 * Improve config readability (comments)
 	 * Version support
 	 * 
 	 * Requested features:
@@ -64,6 +64,7 @@ public class Main extends JavaPlugin {
 	public static HashMap<String, Boolean> frozenPlayers = new HashMap<String, Boolean>();
 	public static HashMap<String, Long> messageCooldowns = new HashMap<>(); // Stops players from getting spammed with "You're frozen" messages
 	public static final ArrayList<String> ALLOWED_COMMANDS = new ArrayList<>();
+	public static final ArrayList<String> PUNISH_COMMANDS = new ArrayList<>();
 	public static ItemStack freezeGun;
 	public static float MOVEMENT_TOLERANCE = (float) 0.06;
 	public static Main instance;
@@ -100,17 +101,25 @@ public class Main extends JavaPlugin {
 		config.addDefault("isBlind", true);
 		config.addDefault("canChat", true);
 		config.addDefault("inventoryTrap", false);
+		List<String> punishCommands = new ArrayList<String>();
+		punishCommands.add("ban %player% You disconnected while frozen by staff");
+		config.addDefault("punishCommands", punishCommands);
+		List<String> allowedCommands = new ArrayList<String>();
+		allowedCommands.add("/sampleCommand");
+		config.addDefault("allowedCommands", allowedCommands);
 		config.options().copyDefaults(true);
 		
-		List<String> allowedCommands = config.getStringList("allowedCommands");
-		if (allowedCommands.isEmpty()) {
-			allowedCommands = new ArrayList<>();
-			allowedCommands.add("/sampleCommand");
-			config.set("allowedCommands", allowedCommands);
-			ALLOWED_COMMANDS.add("/sampleCommand");
-		} else {
+		allowedCommands = config.getStringList("allowedCommands");
+		if (!allowedCommands.isEmpty()) {
 			for (String string : allowedCommands) {
 				ALLOWED_COMMANDS.add(string);
+			}
+		}
+		
+		punishCommands = config.getStringList("punishCommands");
+		if (!punishCommands.isEmpty()) {
+			for (String string : punishCommands) {
+				PUNISH_COMMANDS.add(string);
 			}
 		}
 		

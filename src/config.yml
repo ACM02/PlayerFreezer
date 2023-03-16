@@ -1,0 +1,40 @@
+# PlayerFreezer config file (version 2.0)
+
+# ----------------------------
+#       Messages
+# ----------------------------
+# Set any message value to '' to disable that message
+messages: 
+  onFreezeTarget: '&cYou have been frozen by staff, do not log out or you will be banned. Await further instruction.'
+  onFreezeSender: '&aFroze %player%'
+  unFreezeTarget: '&aYou have been unfrozen by staff'
+  unFreezeSender: '&aUnfroze %player%'
+  freezeWarning: '&cYou have been frozen, don''t log out or you will be banned'
+  blockCommand: '&cYou do not have permission to execute commands at this time'
+  blockChat: '&cYou do not have permission to use chat at this time'
+  blockInteract: '&cYou do not have permission to do that at this time'
+  playerNotFrozen: '&eThat player is not frozen'
+  playerAlreadyFrozen: '&cThat player is already frozen'
+  notFreezable: '&eThat player cannot be frozen'
+  noPermission: '&cYou do not have permission to use that command'
+  playerNotFound: '&cPlayer not found'
+  
+
+# Controls if the freeze gun will work
+freezeGun: true
+
+# ----------------------------
+#       Freeze Options
+# ----------------------------
+# These options control what happens to a frozen player
+canLookAround: true
+canInteract: true
+isBlind: true
+canChat: true
+inventoryTrap: false
+
+# All of the commands that can be used while a player is frozen
+allowedCommands:
+- /sampleCommand
+
+#configVersion: '1.0'

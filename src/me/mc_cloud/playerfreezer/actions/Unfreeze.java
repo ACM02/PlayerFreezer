@@ -8,7 +8,7 @@ import me.mc_cloud.playerfreezer.Main;
 import me.mc_cloud.playerfreezer.tools.Action;
 import me.mc_cloud.playerfreezer.tools.ArgType;
 import me.mc_cloud.playerfreezer.tools.Argument;
-import net.md_5.bungee.api.ChatColor;
+import me.mc_cloud.playerfreezer.tools.Messages;
 
 public class Unfreeze extends Action {
 	
@@ -18,11 +18,9 @@ public class Unfreeze extends Action {
 	
 	@Override
 	public void run(CommandSender sender, String[] args) {
-		Player p;
-		if (Bukkit.getPlayer(args[0]) != null) {
-			p = Bukkit.getPlayer(args[0]);
-		} else {
-			sender.sendMessage(ChatColor.RED + "Player not found");
+		Player p = Bukkit.getPlayer(args[0]);
+		if (p == null) {
+			Messages.send(sender, Messages.PLAYER_NOT_FOUND, null);
 			return;
 		}
 		Main.unfreeze(p, sender);

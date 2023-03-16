@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import me.mc_cloud.playerfreezer.Main;
+import me.mc_cloud.playerfreezer.tools.Messages;
 import me.mc_cloud.playerfreezer.tools.Utils;
 
 public class PlayerMove implements Listener {
@@ -29,14 +30,14 @@ public class PlayerMove implements Listener {
 				e.setTo(e.getFrom());
 				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
 						Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
-					e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+					Messages.send(e.getPlayer(), Messages.FREEZE_WARNING, e.getPlayer());
 					Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 				}
 			} else if (e.getFrom().distance(e.getTo()) > Main.MOVEMENT_TOLERANCE) {
 				e.setTo(e.getFrom());
 				if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
 						Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
-					e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+					Messages.send(e.getPlayer(), Messages.FREEZE_WARNING, e.getPlayer());
 					Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 				}
 			}

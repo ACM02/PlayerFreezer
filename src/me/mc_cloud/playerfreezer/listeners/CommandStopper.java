@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import me.mc_cloud.playerfreezer.Main;
+import me.mc_cloud.playerfreezer.tools.Messages;
 
 public class CommandStopper implements Listener {
 
@@ -22,7 +23,7 @@ public class CommandStopper implements Listener {
 		if (Main.ALLOWED_COMMANDS.contains(e.getMessage().split(" ")[0]) || e.getMessage().split(" ")[0].contains("freeze")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().hasPermission("playerFreezer.bypass")) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(Main.BLOCK_COMMAND_MESSAGE);
+			Messages.send(e.getPlayer(), Messages.BLOCK_COMMAND, e.getPlayer());
 		}
 	}
 

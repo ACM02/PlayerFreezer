@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import me.mc_cloud.playerfreezer.Main;
+import me.mc_cloud.playerfreezer.tools.Messages;
 import me.mc_cloud.playerfreezer.tools.Utils;
 
 public class PlayerChat implements Listener {
@@ -27,7 +28,7 @@ public class PlayerChat implements Listener {
 			e.setCancelled(true);
 			if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
 					Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
-				e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+				Messages.send(e.getPlayer(), Messages.BLOCK_CHAT, e.getPlayer());
 				Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 			}
 		}

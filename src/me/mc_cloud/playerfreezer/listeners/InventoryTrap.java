@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
 import me.mc_cloud.playerfreezer.Main;
+import me.mc_cloud.playerfreezer.tools.Messages;
 import me.mc_cloud.playerfreezer.tools.Utils;
 
 public class InventoryTrap implements Listener {
@@ -38,7 +39,7 @@ public class InventoryTrap implements Listener {
 			
 			if (!Main.messageCooldowns.containsKey(e.getPlayer().getUniqueId().toString()) ||
 					Main.messageCooldowns.get(e.getPlayer().getUniqueId().toString()) <= new Date().getTime()) {
-				e.getPlayer().sendMessage(Main.FREEZE_WARNING);
+				Messages.send(e.getPlayer(), Messages.FREEZE_WARNING, e.getPlayer());
 				Main.messageCooldowns.put(e.getPlayer().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 			}
 		}
@@ -52,7 +53,7 @@ public class InventoryTrap implements Listener {
 				e.setCancelled(true);
 				if (!Main.messageCooldowns.containsKey(e.getWhoClicked().getUniqueId().toString()) ||
 						Main.messageCooldowns.get(e.getWhoClicked().getUniqueId().toString()) <= new Date().getTime()) {
-					e.getWhoClicked().sendMessage(Main.FREEZE_WARNING);
+					Messages.send(e.getWhoClicked(), Messages.FREEZE_WARNING, e.getWhoClicked());
 					Main.messageCooldowns.put(e.getWhoClicked().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 				}
 			}
@@ -67,7 +68,7 @@ public class InventoryTrap implements Listener {
 				e.setCancelled(true);
 				if (!Main.messageCooldowns.containsKey(e.getWhoClicked().getUniqueId().toString()) ||
 						Main.messageCooldowns.get(e.getWhoClicked().getUniqueId().toString()) <= new Date().getTime()) {
-					e.getWhoClicked().sendMessage(Main.FREEZE_WARNING);
+					Messages.send(e.getWhoClicked(), Messages.FREEZE_WARNING, e.getWhoClicked());
 					Main.messageCooldowns.put(e.getWhoClicked().getUniqueId().toString(), Utils.todayPlus(0, 0, 0, 5));
 				}
 			}

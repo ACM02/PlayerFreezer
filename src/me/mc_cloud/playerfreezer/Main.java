@@ -18,15 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import me.mc_cloud.playerfreezer.actions.Freeze;
 import me.mc_cloud.playerfreezer.actions.FreezeGun;
 import me.mc_cloud.playerfreezer.actions.Unfreeze;
 import me.mc_cloud.playerfreezer.listeners.CommandStopper;
-import me.mc_cloud.playerfreezer.listeners.FreezeRayFire;
-import me.mc_cloud.playerfreezer.listeners.FreezeRayHit;
 import me.mc_cloud.playerfreezer.listeners.InventoryTrap;
 import me.mc_cloud.playerfreezer.listeners.PlayerChat;
 import me.mc_cloud.playerfreezer.listeners.PlayerInteract;
@@ -35,6 +32,13 @@ import me.mc_cloud.playerfreezer.listeners.PlayerMove;
 import me.mc_cloud.playerfreezer.tools.CommandManager;
 import me.mc_cloud.playerfreezer.tools.Messages;
 import me.mc_cloud.playerfreezer.tools.UpdateChecker;
+import me.mc_cloud.playerfreezer.tools.freezeRayFire.FreezeRayFire_1_13;
+import me.mc_cloud.playerfreezer.tools.freezeRayFire.FreezeRayFire_1_8;
+import me.mc_cloud.playerfreezer.tools.freezeRayHit.FreezeRayHit_1_16;
+import me.mc_cloud.playerfreezer.tools.freezeRayHit.FreezeRayHit_1_8;
+import me.mc_cloud.playerfreezer.tools.potions.PotionEffectManager;
+import me.mc_cloud.playerfreezer.tools.potions.Potions_1_13;
+import me.mc_cloud.playerfreezer.tools.potions.Potions_1_8;
 import net.md_5.bungee.api.ChatColor;
 
 public class Main extends JavaPlugin {
@@ -55,7 +59,7 @@ public class Main extends JavaPlugin {
 	 * Requested features:
 	 * Anti-leave feature that spams 'Close_Container' packets (ex: https://github.com/czQery/ToolKit)
 	 * Enable/disable any command and rename too?
-	 * Punishment customization (List of commands to run in config.yml
+	 * Unfreeze commands
 	 * playerFreezer reload command
 	 * Config layout overhaul (https://imgur.com/a/3kDKrbs)
 	 * 
@@ -68,6 +72,7 @@ public class Main extends JavaPlugin {
 	public static ItemStack freezeGun;
 	public static float MOVEMENT_TOLERANCE = (float) 0.06;
 	public static Main instance;
+	public static PotionEffectManager potionApplyer;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -140,11 +145,12 @@ public class Main extends JavaPlugin {
 			MOVEMENT_TOLERANCE = 0;
 		}
 		
+		initVersionSpecifics();
+		
 		new PlayerMove(this);
 		new PlayerLeave(this);
 		new CommandStopper(this);
-		new FreezeRayFire(this);
-		new FreezeRayHit(this);
+		
 		if (!config.getBoolean("canInteract")) {
 			new PlayerInteract(this);
 		}
@@ -197,6 +203,65 @@ public class Main extends JavaPlugin {
         });
 	}
 	
+	private void initVersionSpecifics() {
+		String wholeVersion = getServerVersion();
+		if (wholeVersion.contains("1.19")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_16(this);
+		} else if (wholeVersion.contains("1.18")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_16(this);
+		} else if (wholeVersion.contains("1.17")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_16(this);
+		} else if (wholeVersion.contains("1.16")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_16(this);
+		} else if (wholeVersion.contains("1.15")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.14")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.13")) {
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.12")) {
+			potionApplyer = new Potions_1_8();
+			new FreezeRayFire_1_8(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.11")) {
+			potionApplyer = new Potions_1_8();
+			new FreezeRayFire_1_8(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.10")) {
+			potionApplyer = new Potions_1_8();
+			new FreezeRayFire_1_8(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.9")) {
+			potionApplyer = new Potions_1_8();
+			new FreezeRayFire_1_8(this);
+			new FreezeRayHit_1_8(this);
+		} else if (wholeVersion.contains("1.8")) {
+			potionApplyer = new Potions_1_8();
+			new FreezeRayFire_1_8(this);
+			new FreezeRayHit_1_8(this);
+		} else {
+			getLogger().warning("Running unsupported version. Attempting to load...");
+			potionApplyer = new Potions_1_13();
+			new FreezeRayFire_1_13(this);
+			new FreezeRayHit_1_16(this);
+		}
+		
+	}
+
 	@Override
 	public void onDisable() {
 		save(frozenPlayers, new File(getDataFolder(), "frozenPlayers.dat"));
@@ -265,7 +330,7 @@ public class Main extends JavaPlugin {
 				target.openInventory(Bukkit.createInventory(null, 9, "You are frozen"));
 			}
 			if (instance.getConfig().getBoolean("isBlind")) {
-				target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 0, false, false, false));
+				potionApplyer.applyPotionEffects(target, PotionEffectType.BLINDNESS, 1000000, 0, false, false, false);
 			}
 			Messages.send(freezer, Messages.ON_FREEZE_SENDER, target);
 			Messages.send(target, Messages.ON_FREEZE_TARGET, target);
@@ -312,5 +377,9 @@ public class Main extends JavaPlugin {
 		} else {
 			Messages.send(freezer, Messages.PLAYER_NOT_FROZEN, target);
 		}
+	}
+	
+	private static String getServerVersion() {
+	    return Bukkit.getBukkitVersion().split("-")[0];
 	}
 }

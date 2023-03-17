@@ -23,6 +23,7 @@ public class PlayerInteract implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (plugin.getConfig().getBoolean("canInteract")) return;
 		if (e.getPlayer().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
 			e.setCancelled(true);

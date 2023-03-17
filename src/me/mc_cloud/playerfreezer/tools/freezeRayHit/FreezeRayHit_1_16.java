@@ -16,6 +16,7 @@ public class FreezeRayHit_1_16 extends FreezeRayHit {
 	
 	@EventHandler
 	public void onHit(ProjectileHitEvent e) {
+		if (!Main.instance.getConfig().getBoolean("freezeGun")) return;
 		if (e.getEntity().hasMetadata("freezeRay")) {
 			e.setCancelled(true);
 			if (e.getHitEntity() == null) {

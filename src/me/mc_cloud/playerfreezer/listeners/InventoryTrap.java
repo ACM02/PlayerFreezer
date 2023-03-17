@@ -25,6 +25,7 @@ public class InventoryTrap implements Listener {
 	
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent e) {
+		if (!plugin.getConfig().getBoolean("inventoryTrap")) return;
 		if (e.getPlayer().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
 			
@@ -47,6 +48,7 @@ public class InventoryTrap implements Listener {
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
+		if (!plugin.getConfig().getBoolean("inventoryTrap")) return;
 		if (e.getWhoClicked().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getWhoClicked().getUniqueId().toString())) {
 			if (e.getView().getTitle().equals("You are frozen")) {
@@ -62,6 +64,7 @@ public class InventoryTrap implements Listener {
 	
 	@EventHandler
 	public void onInventoryDrag(InventoryDragEvent e) {
+		if (!plugin.getConfig().getBoolean("inventoryTrap")) return;
 		if (e.getWhoClicked().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getWhoClicked().getUniqueId().toString())) {
 			if (e.getView().getTitle().equals("You are frozen")) {

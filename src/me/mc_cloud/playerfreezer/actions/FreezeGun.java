@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.mc_cloud.playerfreezer.Main;
 import me.mc_cloud.playerfreezer.tools.Action;
+import net.md_5.bungee.api.ChatColor;
 
 public class FreezeGun extends Action {
 
@@ -15,7 +16,11 @@ public class FreezeGun extends Action {
 	@Override
 	public void run(CommandSender sender, String[] args) {
 		Player p = (Player) sender;
-		p.getInventory().addItem(Main.freezeGun);
+		if (Main.instance.getConfig().getBoolean("freezeGun")) {
+			p.getInventory().addItem(Main.freezeGun);
+		} else {
+			p.sendMessage(ChatColor.RED + "That feature is not enabled");
+		}
 	}
 
 }

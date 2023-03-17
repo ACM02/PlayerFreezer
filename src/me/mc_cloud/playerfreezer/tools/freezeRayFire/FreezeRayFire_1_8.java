@@ -25,6 +25,7 @@ public class FreezeRayFire_1_8 extends FreezeRayFire {
 	@Override
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
+		if (!Main.instance.getConfig().getBoolean("freezeGun")) return;
 		if (!e.getPlayer().hasPermission("playerFreezer.freeze-gun")) return;
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (e.getPlayer().getItemInHand().getType() == Material.STICK && 

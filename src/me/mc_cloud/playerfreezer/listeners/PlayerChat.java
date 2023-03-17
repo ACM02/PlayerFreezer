@@ -23,6 +23,7 @@ public class PlayerChat implements Listener {
 	
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
+		if (plugin.getConfig().getBoolean("canChat")) return;
 		if (e.getPlayer().hasPermission("playerFreezer.bypass")) return;
 		if (Main.frozenPlayers.keySet().contains(e.getPlayer().getUniqueId().toString())) {
 			e.setCancelled(true);

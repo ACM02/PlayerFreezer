@@ -19,6 +19,7 @@ public class FreezeRayHit_1_8 extends FreezeRayHit {
 	
 	@EventHandler
 	public void onHit(EntityDamageByEntityEvent e) {
+		if (!Main.instance.getConfig().getBoolean("freezeGun")) return;
 		if (e.getDamager().hasMetadata("freezeRay")) {
 			Entity damaged = e.getEntity();
 		    Entity damageEntity = e.getDamager();

@@ -46,19 +46,19 @@ public class Main extends JavaPlugin {
 	 * 
 	 * Future plans: 
 	 * More permissions (Different levels of frozen)
-	 * Changing punishment type (Both default and specify in command)
 	 * New punishment types (Temp ban, 
 	 * Specify level of freeze in command? (Look around, etc)
 	 * Send admins update notifications
-	 * GUI menu for frozen players?
+	 * GUI menu for freezing players?
 	 * Improve config readability (comments)
 	 * Version support
 	 * 
 	 * Requested features:
 	 * Anti-leave feature that spams 'Close_Container' packets (ex: https://github.com/czQery/ToolKit)
 	 * Enable/disable any command and rename too?
-	 * Unfreeze commands
+	 * Run on unfreeze commands
 	 * Config layout overhaul (https://imgur.com/a/3kDKrbs)
+	 * Freeze/unfreeze All
 	 * 
 	 */
 	

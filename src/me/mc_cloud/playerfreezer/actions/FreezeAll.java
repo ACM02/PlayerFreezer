@@ -1,6 +1,7 @@
 package me.mc_cloud.playerfreezer.actions;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -8,24 +9,23 @@ import me.mc_cloud.playerfreezer.Main;
 import me.mc_cloud.playerfreezer.tools.Action;
 import me.mc_cloud.playerfreezer.tools.ArgType;
 import me.mc_cloud.playerfreezer.tools.Argument;
-import me.mc_cloud.playerfreezer.tools.Messages;
 
-public class Freeze extends Action {
+public class FreezeAll extends Action {
 	
-	public Freeze() {
-		addArg(new Argument(ArgType.PLAYER, 0));
-		
+	public FreezeAll() {
+		Argument arg = new Argument(ArgType.PRESET, 0, "all");
+		arg.extraTabArgs.add("all");
+		addArg(arg);
 	}
 	
 	@Override
 	public void run(CommandSender sender, String[] args) {
-		Player p = Bukkit.getPlayer(args[0]);
-		if (p == null) {
-			Messages.send(sender, Messages.PLAYER_NOT_FOUND, null);
-			return;
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (!p.hasPermission("playerFreezer.bypass")) {
+				Main.freeze(p, sender);
+			}
 		}
-		Main.freeze(p, sender);
-		
+		sender.sendMessage(ChatColor.GREEN + "Froze all players.");
 	}
 
 }

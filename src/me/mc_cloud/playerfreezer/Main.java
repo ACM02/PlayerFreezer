@@ -17,9 +17,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
 import me.mc_cloud.playerfreezer.actions.Freeze;
+import me.mc_cloud.playerfreezer.actions.FreezeAll;
 import me.mc_cloud.playerfreezer.actions.FreezeGun;
 import me.mc_cloud.playerfreezer.actions.Reload;
 import me.mc_cloud.playerfreezer.actions.Unfreeze;
+import me.mc_cloud.playerfreezer.actions.UnfreezeAll;
 import me.mc_cloud.playerfreezer.listeners.CommandStopper;
 import me.mc_cloud.playerfreezer.listeners.InventoryTrap;
 import me.mc_cloud.playerfreezer.listeners.PlayerChat;
@@ -141,13 +143,15 @@ public class Main extends JavaPlugin {
 		cmdManager = new CommandManager(this);
 		cmdManager.createCommand("freeze");
 		cmdManager.getCommand("freeze").registerAction(new Freeze());
+		cmdManager.getCommand("freeze").registerAction(new FreezeAll());
 		cmdManager.getCommand("freeze").registerAction(new Reload());
-		cmdManager.getCommand("freeze").setUsageMessage(ChatColor.RED + "Improper usage: /freeze <player>");
+		cmdManager.getCommand("freeze").setUsageMessage(ChatColor.RED + "Improper usage: /freeze <player/all>");
 		cmdManager.getCommand("freeze").setPermissionMessage(Messages.NO_PERMISSION);
 		cmdManager.getCommand("freeze").addPermission("playerFreezer.freeze");
 		cmdManager.createCommand("unfreeze");
+		cmdManager.getCommand("unfreeze").registerAction(new UnfreezeAll());
 		cmdManager.getCommand("unfreeze").registerAction(new Unfreeze());
-		cmdManager.getCommand("unfreeze").setUsageMessage(ChatColor.RED + "Improper usage: /unfreeze <player>");
+		cmdManager.getCommand("unfreeze").setUsageMessage(ChatColor.RED + "Improper usage: /unfreeze <player/all>");
 		cmdManager.getCommand("unfreeze").setPermissionMessage(Messages.NO_PERMISSION);
 		cmdManager.getCommand("unfreeze").addPermission("playerFreezer.unfreeze");
 		
